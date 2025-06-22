@@ -34,7 +34,7 @@
       thumbDiv.innerHTML = "";
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/download", {
+        const response = await fetch("https://yt-downloader-pro.onrender.com/download", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url, format }),
@@ -42,7 +42,7 @@
 
         const result = await response.json();
         if (result.success) {
-          const downloadUrl = `http://127.0.0.1:5000/downloads/${encodeURIComponent(result.filename)}`;
+          const downloadUrl = `https://yt-downloader-pro.onrender.com/downloads/${encodeURIComponent(result.filename)}`;
           status.innerHTML = `✅ Download complete! <br/><a class="underline text-blue-400" href="${downloadUrl}" download target="_blank">Click here to download</a>`;
           if (result.thumbnail) {
             thumbDiv.innerHTML = `<img src="${result.thumbnail}" alt="Thumbnail" class="mt-2 rounded shadow w-full">`;
