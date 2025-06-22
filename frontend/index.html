@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Downloader Pro (Fixed)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md shadow-md">
+    <h1 class="text-2xl font-bold mb-4 text-center">🎬 YouTube Downloader Pro</h1>
+    <input id="urlInput" type="text" placeholder="Paste YouTube URL"
+      class="w-full p-2 rounded bg-gray-700 text-white mb-4 outline-none"/>
+
+    <select id="formatSelect" class="w-full p-2 rounded bg-gray-700 text-white mb-4">
+      <option value="mp4">MP4 (Video)</option>
+      <option value="mp3">MP3 (Audio)</option>
+    </select>
+
+    <button onclick="downloadVideo()"
+      class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded font-semibold">Download</button>
+
+    <div id="thumbnail" class="mt-4 text-center"></div>
+    <p id="status" class="mt-4 text-center font-medium"></p>
+  </div>
+
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById('urlInput').value;
+      const format = document.getElementById('formatSelect').value;
+      const status = document.getElementById('status');
+      const thumbDiv = document.getElementById('thumbnail');
+      status.textContent = "⏳ Processing...";
+      thumbDiv.innerHTML = "";
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, format }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          const downloadUrl = `http://127.0.0.1:5000/downloads/${encodeURIComponent(result.filename)}`;
+          status.innerHTML = `✅ Download complete! <br/><a class="underline text-blue-400" href="${downloadUrl}" download target="_blank">Click here to download</a>`;
+          if (result.thumbnail) {
+            thumbDiv.innerHTML = `<img src="${result.thumbnail}" alt="Thumbnail" class="mt-2 rounded shadow w-full">`;
+          }
+        } else {
+          status.textContent = "❌ Error: " + result.error;
+        }
+      } catch (err) {
+        status.textContent = "⚠️ Failed to connect to backend.";
+      }
+    }
+  </script>
+</body>
+</html>
